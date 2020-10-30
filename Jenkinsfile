@@ -37,8 +37,22 @@ pipeline {
             steps {
                 echo 'building the applicaiton...'
                 sh 'mvn clean install'
+                // sh "mv target/*.war target/QAWebapp.war"
             }
         }        
+        
+        
+         stage('Deploy-test') {
+                  steps {
+                      sshagent(['tomcat-test-server']) {
+                  sh 'scp -o StrictHostKeyChecking=no target/AVNCommunication-1.0.war testserver@13.82.20.111:/var/lib/tomcat8/webapps/QAWebapp.war'
+                   sh 'scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 testserver@13.82.20.111:/var/lib/tomcat8/webapps/QAWebapp'
+                   
+                
+                }
+            }
+        }
+        
         stage('test') {
             steps {
                 echo 'testing the application...'
